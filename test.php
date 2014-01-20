@@ -1,6 +1,7 @@
 <?php
 use Rover\MarsCommandFactory;
 
+include_once 'Plateau.php';
 include_once 'Rover/Command.php';
 include_once 'Rover/CommandFactory.php';
 include_once 'Rover/CommandFactory/MarsCommandFactory.php';
@@ -34,16 +35,14 @@ echo $rover2->getDirection() . "\n";
 echo print_r($rover2->getExplorationErrors(), true);
 
 echo '====================' . "\n";
-$marsCF = new MarsCommandFactory();
-$rover3 = new Rover(1, 2, 'N', $marsCF);
-$rover3->setExploreProgram('LMLMLMLMM');
-$rover3->setMaxX(5);
-$rover3->setMaxY(5);
+$plateau = new Plateau(5, 5);
 
-$rover4 = new Rover(3, 3, 'E', $marsCF);
+$marsCF = new MarsCommandFactory();
+$rover3 = new Rover(1, 2, 'N', $plateau, $marsCF);
+$rover3->setExploreProgram('LMLMLMLMM');
+
+$rover4 = new Rover(3, 3, 'E', $plateau, $marsCF);
 $rover4->setExploreProgram('MMRMMRMRRMM');
-$rover4->setMaxX(5);
-$rover4->setMaxY(5);
 
 $rover3->runExploration();
 echo $rover3->getX() . " ";

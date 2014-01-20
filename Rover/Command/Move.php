@@ -36,6 +36,6 @@ class Move implements Command
 
     private function isRoverOutOfPlateau(Rover $rover)
     {
-        return $rover->getX() < 0 || $rover->getY() < 0 || $rover->getX() > $rover->getMaxX() || $rover->getY() > $rover->getMaxY() ;
+        return $rover->getX() < 0 || $rover->getY() < 0 || $rover->getX() > $rover->getPlateau()->getTopX() || $rover->getY() > $rover->getPlateau()->getTopY();
     }
 }

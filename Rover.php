@@ -9,8 +9,7 @@ class Rover
     private $y;
     private $direction;
 
-    private $maxX;
-    private $maxY;
+    private $plateau;
 
     private $exploreProgram = [];
     private $explorationErrors = [];
@@ -18,11 +17,12 @@ class Rover
 
     private $commandFactory;
 
-    function __construct($x, $y, $direction, CommandFactory $commandFactory)
+    function __construct($x, $y, $direction, Plateau $plateau, CommandFactory $commandFactory)
     {
         $this->x = $x;
         $this->y = $y;
         $this->direction = $direction;
+        $this->plateau = $plateau;
         $this->commandFactory = $commandFactory;
     }
 
@@ -114,24 +114,14 @@ class Rover
         return $this->y;
     }
 
-    public function setMaxX($maxX)
+    public function setPlateau($plateau)
     {
-        $this->maxX = $maxX;
+        $this->plateau = $plateau;
     }
 
-    public function getMaxX()
+    public function getPlateau()
     {
-        return $this->maxX;
-    }
-
-    public function setMaxY($maxY)
-    {
-        $this->maxY = $maxY;
-    }
-
-    public function getMaxY()
-    {
-        return $this->maxY;
+        return $this->plateau;
     }
 
     public function setCommandFactory(CommandFactory $commandFactory)
