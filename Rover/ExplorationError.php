@@ -16,4 +16,24 @@ class ExplorationError extends RuntimeException
         $this->commandNum = $commandNum;
         parent::__construct($message, $code);
     }
+
+    public function setCommandCode($commandCode)
+    {
+        $this->commandCode = $commandCode;
+    }
+
+    public function getCommandCode()
+    {
+        return $this->commandCode;
+    }
+
+    public function setCommandNum($commandNum)
+    {
+        $this->commandNum = $commandNum;
+    }
+
+    public function getCommandNum()
+    {
+        return $this->commandNum;
+    }
 }
