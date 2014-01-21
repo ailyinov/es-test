@@ -41,12 +41,7 @@ class Rover
 
     public function setExploreProgram($exploreProgram)
     {
-        if (!is_string($exploreProgram)) {
-            throw new InvalidArgumentException('Illegal rover command format');
-        }
-
         $exploreProgram = str_split($exploreProgram);
-
         foreach ($exploreProgram as &$command) {
             $command = strtoupper($command);
             if (!in_array($command, $this->commandFactory->getCommandsList())) {
