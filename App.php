@@ -1,8 +1,4 @@
 <?php
-
-use Input\File;
-use Rover\MarsCommandFactory;
-
 include_once 'InputReader.php';
 include_once 'InputPlateau.php';
 include_once 'InputRover.php';
@@ -17,6 +13,9 @@ include_once 'Rover/Command/Move.php';
 include_once 'Rover/Command/TurnLeft.php';
 include_once 'Rover/Command/TurnRight.php';
 include_once 'Rover.php';
+
+use Input\File;
+use Rover\MarsCommandFactory;
 
 class App
 {
