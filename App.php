@@ -23,12 +23,12 @@ class App
     public function run()
     {
         $fileInput = new File(dirname(__FILE__) . '/data.txt');
-        $plateauInput = $fileInput->getPlateau();
-        $plateau = new Plateau($plateauInput->getX(), $plateauInput->getY());
+        $inputPlateau = $fileInput->getPlateau();
+        $plateau = new Plateau($inputPlateau->getX(), $inputPlateau->getY());
         $marsCommandFactory = new MarsCommandFactory();
-        foreach ($fileInput->getRovers() as $roverInput) {
-            $rover = new Rover($roverInput->getX(), $roverInput->getY(), $roverInput->getDirection(), $plateau, $marsCommandFactory);
-            $rover->setExploreProgram($roverInput->getExplorationProgram());
+        foreach ($fileInput->getRovers() as $inputRover) {
+            $rover = new Rover($inputRover->getX(), $inputRover->getY(), $inputRover->getDirection(), $plateau, $marsCommandFactory);
+            $rover->setExploreProgram($inputRover->getExplorationProgram());
             $rover->runExploration();
 
             echo $rover->getX() . " ";
