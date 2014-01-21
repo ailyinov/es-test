@@ -34,7 +34,7 @@ class App
             echo $rover->getY() . " ";
             echo $rover->getDirection() . "\n";
             foreach($rover->getExplorationErrors() as $explorationError) {
-                echo $explorationError->getMessage() . "\n";
+                echo $explorationError->getMessage() . " comm. #{$explorationError->getCommandNum()}" . "\n";
             }
             echo str_repeat('=', 20) . "\n";
         }
