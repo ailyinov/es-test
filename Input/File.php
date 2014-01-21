@@ -1,4 +1,10 @@
 <?php
+namespace Input;
+
+use ErrorException;
+use InputPlateau;
+use InputReader;
+use InputRover;
 
 class File implements InputReader
 {

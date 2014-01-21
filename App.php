@@ -1,11 +1,12 @@
 <?php
 
+use Input\File;
 use Rover\MarsCommandFactory;
 
 include_once 'InputReader.php';
+include_once 'InputPlateau.php';
+include_once 'InputRover.php';
 include_once 'Input/File.php';
-include_once 'Input/InputPlateau.php';
-include_once 'Input/InputRover.php';
 
 include_once 'Plateau.php';
 include_once 'Rover/Command.php';
@@ -15,7 +16,6 @@ include_once 'Rover/ExplorationError.php';
 include_once 'Rover/Command/Move.php';
 include_once 'Rover/Command/TurnLeft.php';
 include_once 'Rover/Command/TurnRight.php';
-include_once 'RoverSimple.php';
 include_once 'Rover.php';
 
 class App
@@ -34,7 +34,10 @@ class App
             echo $rover->getX() . " ";
             echo $rover->getY() . " ";
             echo $rover->getDirection() . "\n";
-            echo print_r($rover->getExplorationErrors(), true);
+            foreach($rover->getExplorationErrors() as $explorationError) {
+                echo $explorationError->getMessage() . "\n";
+            }
+            echo str_repeat('=', 20) . "\n";
         }
 
     }
