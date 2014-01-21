@@ -8,7 +8,7 @@ interface InputReader
     public function getPlateau();
 
     /**
-     * @return array InputRovers
+     * @return array InputRover
      */
     public function getRovers();
 }
