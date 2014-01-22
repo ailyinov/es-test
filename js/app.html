@@ -46,6 +46,7 @@
                     getSizes: 'flickr.photos.getSizes'
                 }
             };
+            this.queue = $();
         }
 
         Transport.prototype.getRecent = function() {
@@ -83,10 +84,10 @@
 
         Gallery.prototype.addSizesInfo = function() {
             var $this = this;
-            var thumbnailsLoaded = 0;
+            var sizesLoadedCount = 0;
             var progressStep = 100 / this.photos.length;
-            var isAllThumbnailsLoaded = function () {
-                return $this.photos.length == thumbnailsLoaded;
+            var isAllSizesLoaded = function () {
+                return $this.photos.length == sizesLoadedCount;
             };
 
             $.each($this.photos, function(key, photo) {
@@ -105,9 +106,9 @@
                     photo.originalSrc = original.length > 0 ? original.pop().source : photo.thumbnail.src;
                     photo.pageUrl = [$this.flickrPhotosUrl, photo.owner, photo.id].join('/');
 
-                    thumbnailsLoaded ++;
-                    $($this.progressBarId).find('.percent-ready').width(progressStep * thumbnailsLoaded + '%');
-                    if (isAllThumbnailsLoaded()) {
+                    sizesLoadedCount ++;
+                    $($this.progressBarId).find('.percent-ready').width(progressStep * sizesLoadedCount + '%');
+                    if (isAllSizesLoaded()) {
                         $($this.progressBarId).hide();
                         $this.render();
                     }
