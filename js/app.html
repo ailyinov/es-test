@@ -28,86 +28,116 @@
     <script src="jquery-2.0.3.min.js"></script>
     <script src="lightbox/js/lightbox-2.6.min.js"></script>
     <script>
-        var Gallery = function() {
-            var apiUrl = 'http://api.flickr.com/services/rest/';
-            var apiResponseFormat = 'json';
-            var apiKey = 'b7eb65d82d010950f8c2b1cea2961679';
-            var apiMethod = {
+        function Transport(settings) {
+            var defaults = {
+                apiUrl: 'http://api.flickr.com/services/rest/',
+                apiResponseFormat: 'json',
+                apiKey: 'b7eb65d82d010950f8c2b1cea2961679'
+            };
+
+            settings = $.extend({}, defaults, settings);
+
+            this.apiUrl = settings.apiUrl;
+            this.apiResponseFormat = settings.apiResponseFormat;
+            this.apiKey = settings.apiKey;
+            this.apiMethod = {
                 photos: {
                     getRecent: 'flickr.photos.getRecent',
                     getSizes: 'flickr.photos.getSizes'
                 }
             };
-            var flickrPhotosUrl = 'http://www.flickr.com/photos';
-            var photos;
-            var containerId = '#gallery';
-            var progressBarId = '#progress-bar';
+        }
 
-            var imagesPerRow = 10;
+        Transport.prototype.getRecent = function() {
+            var $this = this;
+            return $.getJSON($this.apiUrl + '?' + $.param({method: $this.apiMethod.photos.getRecent, format: $this.apiResponseFormat, api_key: $this.apiKey}) + '&jsoncallback=?');
+        };
 
-            $.getJSON(apiUrl + '?' + $.param({method: apiMethod.photos.getRecent, format: apiResponseFormat, api_key: apiKey}) + '&jsoncallback=?')
-                    .done(function(data) {
-                        photos = data.photos.photo;
-                        onPhotosLoaded();
-                    });
+        Transport.prototype.getSizes = function(photoId) {
+            var $this = this;
+            return $.getJSON($this.apiUrl + '?' + $.param({method: $this.apiMethod.photos.getSizes, format: $this.apiResponseFormat, api_key: $this.apiKey, photo_id: photoId}) + '&jsoncallback=?');
+        };
 
-            function onPhotosLoaded() {
-                var thumbnailsLoaded = 0;
-                var progressStep = 100 / photos.length;
-                var isAllThumbnailsLoaded = function () {
-                    return photos.length == thumbnailsLoaded;
-                };
+        function Gallery(settings) {
+            var $this = this;
+            var defaults = {
+                containerId: '#gallery',
+                progressBarId: '#progress-bar',
+                imagesPerRow: 10
+            };
 
-                $.each(photos, function(key, photo) {
-                    $.getJSON(apiUrl + '?' + $.param({method: apiMethod.photos.getSizes, format: apiResponseFormat, api_key: apiKey, photo_id: photo.id}) + '&jsoncallback=?')
-                            .done(function(data) {
-                                var thumbnail = $.grep(data.sizes.size, function(e) {return e.label == 'Thumbnail'});
-                                if (thumbnail.length > 0) {
-                                    thumbnail = thumbnail.pop();
-                                    photo.thumbnail = {
-                                        width: thumbnail.width,
-                                        height: thumbnail.height,
-                                        src: thumbnail.source
-                                    };
-                                }
+            settings = $.extend({}, defaults, settings);
 
-                                var original = $.grep(data.sizes.size, function(e) {return e.label == 'Original'});
-                                photo.originalSrc = original.length > 0 ? original.pop().source : photo.thumbnail.src;
-                                photo.pageUrl = [flickrPhotosUrl, photo.owner, photo.id].join('/');
+            this.containerId = settings.containerId;
+            this.progressBarId = settings.progressBarId;
+            this.imagesPerRow = settings.imagesPerRow;
 
-                                thumbnailsLoaded ++;
-                                $(progressBarId).find('.percent-ready').width(progressStep * thumbnailsLoaded + '%');
-                                if (isAllThumbnailsLoaded()) {
-                                    $(progressBarId).hide();
-                                    onThumbnailsLoaded();
-                                }
-                            });
-                });
-            }
+            this.transport = new Transport();
+            this.flickrPhotosUrl = 'http://www.flickr.com/photos';
+            this.photos = [];
+            this.transport.getRecent().done(function(data) {
+                $this.photos = data.photos.photo;
+                $this.onPhotosLoaded();
+            });
+        }
 
-            function onThumbnailsLoaded() {
-                var images = $();
-                var rows = $();
-                $.each(photos, function(key, photo) {
-                    var td = $('<td></td>').append(
+        Gallery.prototype.onPhotosLoaded = function() {
+            var $this = this;
+            var thumbnailsLoaded = 0;
+            var progressStep = 100 / this.photos.length;
+            var isAllThumbnailsLoaded = function () {
+                return $this.photos.length == thumbnailsLoaded;
+            };
+
+            $.each($this.photos, function(key, photo) {
+                $this.transport.getSizes(photo.id)
+                        .done(function(data) {
+                            var thumbnail = $.grep(data.sizes.size, function(e) {return e.label == 'Thumbnail'});
+                            if (thumbnail.length > 0) {
+                                thumbnail = thumbnail.pop();
+                                photo.thumbnail = {
+                                    width: thumbnail.width,
+                                    height: thumbnail.height,
+                                    src: thumbnail.source
+                                };
+                            }
+
+                            var original = $.grep(data.sizes.size, function(e) {return e.label == 'Original'});
+                            photo.originalSrc = original.length > 0 ? original.pop().source : photo.thumbnail.src;
+                            photo.pageUrl = [$this.flickrPhotosUrl, photo.owner, photo.id].join('/');
+
+                            thumbnailsLoaded ++;
+                            $($this.progressBarId).find('.percent-ready').width(progressStep * thumbnailsLoaded + '%');
+                            if (isAllThumbnailsLoaded()) {
+                                $($this.progressBarId).hide();
+                                $this.onThumbnailsLoaded();
+                            }
+                        });
+            });
+        };
+
+        Gallery.prototype.onThumbnailsLoaded  = function() {
+            var $this = this;
+            var images = $();
+            var rows = $();
+            $.each($this.photos, function(key, photo) {
+                var td = $('<td></td>').append(
                         $('<div></div>').width(photo.thumbnail.width).height(photo.thumbnail.height).append(
-                            $('<a></a>').attr('href', photo.originalSrc).attr('data-lightbox', photo.id).append(
-                                $('<img>').attr('src', photo.thumbnail.src)
-                            )
+                                $('<a></a>').attr('href', photo.originalSrc).attr('data-lightbox', photo.id).append(
+                                        $('<img>').attr('src', photo.thumbnail.src)
+                                )
                         ),
                         $('<div></div>').width(photo.thumbnail.width).addClass('photo-title').text(photo.title),
                         $('<a></a>').attr('href', photo.pageUrl).html('&raquo;')
-                    );
-                    images = images.add(td);
-                    if (images.length == imagesPerRow) {
-                        rows = rows.add($('<tr></tr>').append(images));
-                        images = $();
-                    }
-                });
-                rows = rows.add($('<tr></tr>').append(images));
-                $(containerId).append(rows);
-            }
-
+                );
+                images = images.add(td);
+                if (images.length == $this.imagesPerRow) {
+                    rows = rows.add($('<tr></tr>').append(images));
+                    images = $();
+                }
+            });
+            rows = rows.add($('<tr></tr>').append(images));
+            $($this.containerId).append(rows);
         };
 
         $(function() {
