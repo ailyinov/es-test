@@ -14,6 +14,9 @@
             padding: 2px;
             font-size: 10px;
         }
+        #progress-bar {
+            background-color: #343434;
+        }
         .percent-ready {
             width: 0;
             height: 20px;
@@ -56,11 +59,15 @@
                 $.each(photos, function(key, photo) {
                     $.getJSON(apiUrl + '?' + $.param({method: apiMethod.photos.getSizes, format: apiResponseFormat, api_key: apiKey, photo_id: photo.id}) + '&jsoncallback=?')
                             .done(function(data) {
-                                photo.thumbnail = {
-                                    width: data.sizes.size[2].width,
-                                    height: data.sizes.size[2].height,
-                                    src: data.sizes.size[2].source
-                                };
+                                var thumbnail = $.grep(data.sizes.size, function(e) {return e.label == 'Thumbnail'});
+                                if ($.isArray(thumbnail)) {
+                                    thumbnail = thumbnail.pop();
+                                    photo.thumbnail = {
+                                        width: thumbnail.width,
+                                        height: thumbnail.height,
+                                        src: thumbnail.source
+                                    };
+                                }
                                 photo.pageUrl = [flickrPhotosUrl, photo.owner, photo.id].join('/');
                                 thumbnailsLoaded ++;
                                 $(progressBarId).find('.percent-ready').width(progressStep * thumbnailsLoaded + '%');
