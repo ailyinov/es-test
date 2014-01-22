@@ -24,7 +24,9 @@
         }
         /*.clear { clear: both; }*/
     </style>
+    <link href="lightbox/css/lightbox.css" rel="stylesheet" />
     <script src="jquery-2.0.3.min.js"></script>
+    <script src="lightbox/js/lightbox-2.6.min.js"></script>
     <script>
         var Gallery = function() {
             var apiUrl = 'http://api.flickr.com/services/rest/';
@@ -68,7 +70,11 @@
                                         src: thumbnail.source
                                     };
                                 }
+
+                                var original = $.grep(data.sizes.size, function(e) {return e.label == 'Original'});
+                                photo.originalSrc = original.length > 0 ? original.pop().source : photo.thumbnail.src;
                                 photo.pageUrl = [flickrPhotosUrl, photo.owner, photo.id].join('/');
+
                                 thumbnailsLoaded ++;
                                 $(progressBarId).find('.percent-ready').width(progressStep * thumbnailsLoaded + '%');
                                 if (isAllThumbnailsLoaded()) {
@@ -85,7 +91,9 @@
                 $.each(photos, function(key, photo) {
                     var td = $('<td></td>').append(
                         $('<div></div>').width(photo.thumbnail.width).height(photo.thumbnail.height).append(
-                            $('<img>').attr('src', photo.thumbnail.src)
+                            $('<a></a>').attr('href', photo.originalSrc).attr('data-lightbox', photo.id).append(
+                                $('<img>').attr('src', photo.thumbnail.src)
+                            )
                         ),
                         $('<div></div>').width(photo.thumbnail.width).addClass('photo-title').text(photo.title),
                         $('<a></a>').attr('href', photo.pageUrl).html('&raquo;')
