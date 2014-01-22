@@ -8,11 +8,6 @@
             overflow: auto;
             width: 100%
         }
-        #gallery li {
-            float: left;
-            display: block;
-            margin: 2px;
-        }
         #gallery .photo-title {
             height: 40px;
             overflow: hidden;
@@ -62,28 +57,13 @@
                                 photo.pageUrl = flickrPhotosUrl + photo.owner + '/' + photo.id;
                                 thumbnailsLoaded ++;
                                 if (isAllThumbnailsLoaded()) {
-                                    onThumbnailsLoaded2();
+                                    onThumbnailsLoaded();
                                 }
                             });
                 });
             }
 
             function onThumbnailsLoaded() {
-                var images = $();
-                $.each(photos, function(key, photo) {
-                    var li = $('<li></li>').append(
-                        $('<div></div>').width(photo.thumbnail.width).height(photo.thumbnail.height).append(
-                            $('<img>').attr('src', photo.thumbnail.src)
-                        ),
-                        $('<div></div>').width(photo.thumbnail.width).addClass('photo-title').text(photo.title),
-                        $('<a></a>').attr('href', photo.pageUrl).html('&raquo;')
-                    );
-                    images = images.add(li);
-                });
-                $(containerId).append(images);
-            }
-
-            function onThumbnailsLoaded2() {
                 var images = $();
                 var rows = $();
                 $.each(photos, function(key, photo) {
@@ -112,7 +92,6 @@
     </script>
 </head>
 <body>
-    <!--<ul id="gallery"></ul>-->
     <table id="gallery"></table>
 </body>
 </html>
