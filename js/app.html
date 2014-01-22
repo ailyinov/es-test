@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style type="text/css">
+        #gallery {
+            list-style: none outside;
+            overflow: auto;
+            width: 100%
+        }
+        #gallery li {
+            float: left;
+            display: block;
+            margin: 2px;
+        }
+        #gallery .photo-title {
+            height: 40px;
+            overflow: hidden;
+            padding: 2px;
+            font-size: 10px;
+        }
+        /*.clear { clear: both; }*/
+    </style>
+    <script src="jquery-2.0.3.min.js"></script>
+    <script>
+        var Gallery = function() {
+            var apiUrl = 'http://api.flickr.com/services/rest/';
+            var apiResponseFormat = 'json';
+            var apiKey = 'b7eb65d82d010950f8c2b1cea2961679';
+            var apiMethod = {
+                photos: {
+                    getRecent: 'flickr.photos.getRecent',
+                    getSizes: 'flickr.photos.getSizes'
+                }
+            };
+            var flickrPhotosUrl = 'http://www.flickr.com/photos/';
+            var photos;
+            var containerId = '#gallery';
+
+            var imagesPerRow = 10;
+
+            $.getJSON(apiUrl + '?' + $.param({method: apiMethod.photos.getRecent, format: apiResponseFormat, api_key: apiKey}) + '&jsoncallback=?')
+                    .done(function(data) {
+                        photos = data.photos.photo;
+                        onPhotosLoaded();
+                    });
+
+            function onPhotosLoaded() {
+                var thumbnailsLoaded = 0;
+                function isAllThumbnailsLoaded() {
+                    return photos.length == thumbnailsLoaded;
+                }
+
+                $.each(photos, function(key, photo) {
+                    $.getJSON(apiUrl + '?' + $.param({method: apiMethod.photos.getSizes, format: apiResponseFormat, api_key: apiKey, photo_id: photo.id}) + '&jsoncallback=?')
+                            .done(function(data) {
+                                photo.thumbnail = {
+                                    width: data.sizes.size[2].width,
+                                    height: data.sizes.size[2].height,
+                                    src: data.sizes.size[2].source
+                                };
+                                photo.pageUrl = flickrPhotosUrl + photo.owner + '/' + photo.id;
+                                thumbnailsLoaded ++;
+                                if (isAllThumbnailsLoaded()) {
+                                    onThumbnailsLoaded2();
+                                }
+                            });
+                });
+            }
+
+            function onThumbnailsLoaded() {
+                var images = $();
+                $.each(photos, function(key, photo) {
+                    var li = $('<li></li>').append(
+                        $('<div></div>').width(photo.thumbnail.width).height(photo.thumbnail.height).append(
+                            $('<img>').attr('src', photo.thumbnail.src)
+                        ),
+                        $('<div></div>').width(photo.thumbnail.width).addClass('photo-title').text(photo.title),
+                        $('<a></a>').attr('href', photo.pageUrl).html('&raquo;')
+                    );
+                    images = images.add(li);
+                });
+                $(containerId).append(images);
+            }
+
+            function onThumbnailsLoaded2() {
+                var images = $();
+                var rows = $();
+                $.each(photos, function(key, photo) {
+                    var td = $('<td></td>').append(
+                        $('<div></div>').width(photo.thumbnail.width).height(photo.thumbnail.height).append(
+                            $('<img>').attr('src', photo.thumbnail.src)
+                        ),
+                        $('<div></div>').width(photo.thumbnail.width).addClass('photo-title').text(photo.title),
+                        $('<a></a>').attr('href', photo.pageUrl).html('&raquo;')
+                    );
+                    images = images.add(td);
+                    if (images.length == imagesPerRow) {
+                        rows = rows.add($('<tr></tr>').append(images));
+                        images = $();
+                    }
+                });
+                rows = rows.add($('<tr></tr>').append(images));
+                $(containerId).append(rows);
+            }
+
+        };
+
+        $(function() {
+            var gallery = new Gallery();
+        });
+    </script>
+</head>
+<body>
+    <!--<ul id="gallery"></ul>-->
+    <table id="gallery"></table>
+</body>
+</html>
