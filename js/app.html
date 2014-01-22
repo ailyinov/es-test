@@ -33,7 +33,7 @@
                     getSizes: 'flickr.photos.getSizes'
                 }
             };
-            var flickrPhotosUrl = 'http://www.flickr.com/photos/';
+            var flickrPhotosUrl = 'http://www.flickr.com/photos';
             var photos;
             var containerId = '#gallery';
             var progressBarId = '#progress-bar';
@@ -61,7 +61,7 @@
                                     height: data.sizes.size[2].height,
                                     src: data.sizes.size[2].source
                                 };
-                                photo.pageUrl = flickrPhotosUrl + photo.owner + '/' + photo.id;
+                                photo.pageUrl = [flickrPhotosUrl, photo.owner, photo.id].join('/');
                                 thumbnailsLoaded ++;
                                 $(progressBarId).find('.percent-ready').width(progressStep * thumbnailsLoaded + '%');
                                 if (isAllThumbnailsLoaded()) {
