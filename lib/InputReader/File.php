@@ -1,5 +1,5 @@
 <?php
-namespace Input;
+namespace InputReader;
 
 use ErrorException;
 use InputPlateau;

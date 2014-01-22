@@ -1,20 +1,20 @@
 <?php
-include_once 'InputReader.php';
-include_once 'InputPlateau.php';
-include_once 'InputRover.php';
-include_once 'Input/File.php';
+include_once 'lib/InputReader.php';
+include_once 'lib/InputPlateau.php';
+include_once 'lib/InputRover.php';
+include_once 'lib/InputReader/File.php';
 
-include_once 'Plateau.php';
-include_once 'Rover/Command.php';
-include_once 'Rover/CommandFactory.php';
-include_once 'Rover/CommandFactory/MarsCommandFactory.php';
-include_once 'Rover/ExplorationError.php';
-include_once 'Rover/Command/Move.php';
-include_once 'Rover/Command/TurnLeft.php';
-include_once 'Rover/Command/TurnRight.php';
-include_once 'Rover.php';
+include_once 'lib/Plateau.php';
+include_once 'lib/Rover/Command.php';
+include_once 'lib/Rover/CommandFactory.php';
+include_once 'lib/Rover/CommandFactory/MarsCommandFactory.php';
+include_once 'lib/Rover/ExplorationError.php';
+include_once 'lib/Rover/Command/Move.php';
+include_once 'lib/Rover/Command/TurnLeft.php';
+include_once 'lib/Rover/Command/TurnRight.php';
+include_once 'lib/Rover.php';
 
-use Input\File;
+use InputReader\File;
 use Rover\MarsCommandFactory;
 
 class App
@@ -27,7 +27,7 @@ class App
         $marsCommandFactory = new MarsCommandFactory();
         foreach ($fileInput->getRovers() as $inputRover) {
             $rover = new Rover($inputRover->getX(), $inputRover->getY(), $inputRover->getDirection(), $plateau, $marsCommandFactory);
-            $rover->setExploreProgram($inputRover->getExplorationProgram());
+            $rover->setExplorationProgram($inputRover->getExplorationProgram());
             $rover->runExploration();
 
             echo $rover->getX() . " ";

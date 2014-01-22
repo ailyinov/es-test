@@ -11,7 +11,7 @@ class Rover
 
     private $plateau;
 
-    private $exploreProgram = [];
+    private $explorationProgram = [];
     private $explorationErrors = [];
     private $currentCommandNum;
 
@@ -39,7 +39,7 @@ class Rover
         return $this->direction;
     }
 
-    public function setExploreProgram($exploreProgram)
+    public function setExplorationProgram($exploreProgram)
     {
         $exploreProgram = str_split($exploreProgram);
         foreach ($exploreProgram as &$command) {
@@ -48,18 +48,18 @@ class Rover
                 throw new DomainException('Unknown rover command');
             }
         }
-        $this->exploreProgram = $exploreProgram;
+        $this->explorationProgram = $exploreProgram;
     }
 
-    public function getExploreProgram()
+    public function getExplorationProgram()
     {
-        return $this->exploreProgram;
+        return $this->explorationProgram;
     }
 
     public function runExploration()
     {
         $this->explorationErrors = [];
-        foreach ($this->getExploreProgram() as $cn => $command) {
+        foreach ($this->getExplorationProgram() as $cn => $command) {
             $this->setCurrentCommandNum($cn);
             try {
                 $this->commandFactory->getCommand($command)->run($this);

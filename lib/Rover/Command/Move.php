@@ -28,7 +28,7 @@ class Move implements Command
             throw new ExplorationError(
                 "Rover was out of plateau [{$rover->getX()}, {$rover->getY()}]",
                 MarsCommandFactory::ERR_OUT_OF_PLATEAU,
-                $rover->getExploreProgram()[$rover->getCurrentCommandNum()],
+                $rover->getExplorationProgram()[$rover->getCurrentCommandNum()],
                 $rover->getCurrentCommandNum()
             );
         }
