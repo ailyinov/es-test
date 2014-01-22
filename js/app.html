@@ -60,7 +60,7 @@
                     $.getJSON(apiUrl + '?' + $.param({method: apiMethod.photos.getSizes, format: apiResponseFormat, api_key: apiKey, photo_id: photo.id}) + '&jsoncallback=?')
                             .done(function(data) {
                                 var thumbnail = $.grep(data.sizes.size, function(e) {return e.label == 'Thumbnail'});
-                                if ($.isArray(thumbnail)) {
+                                if (thumbnail.length > 0) {
                                     thumbnail = thumbnail.pop();
                                     photo.thumbnail = {
                                         width: thumbnail.width,
