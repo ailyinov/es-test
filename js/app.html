@@ -90,29 +90,28 @@
             };
 
             $.each($this.photos, function(key, photo) {
-                $this.transport.getSizes(photo.id)
-                        .done(function(data) {
-                            var thumbnail = $.grep(data.sizes.size, function(e) {return e.label == 'Thumbnail'});
-                            if (thumbnail.length > 0) {
-                                thumbnail = thumbnail.pop();
-                                photo.thumbnail = {
-                                    width: thumbnail.width,
-                                    height: thumbnail.height,
-                                    src: thumbnail.source
-                                };
-                            }
+                $this.transport.getSizes(photo.id).done(function (data) {
+                    var thumbnail = $.grep(data.sizes.size, function(e) {return e.label == 'Thumbnail'});
+                    if (thumbnail.length > 0) {
+                        thumbnail = thumbnail.pop();
+                        photo.thumbnail = {
+                            width: thumbnail.width,
+                            height: thumbnail.height,
+                            src: thumbnail.source
+                        };
+                    }
 
-                            var original = $.grep(data.sizes.size, function(e) {return e.label == 'Original'});
-                            photo.originalSrc = original.length > 0 ? original.pop().source : photo.thumbnail.src;
-                            photo.pageUrl = [$this.flickrPhotosUrl, photo.owner, photo.id].join('/');
+                    var original = $.grep(data.sizes.size, function(e) {return e.label == 'Original'});
+                    photo.originalSrc = original.length > 0 ? original.pop().source : photo.thumbnail.src;
+                    photo.pageUrl = [$this.flickrPhotosUrl, photo.owner, photo.id].join('/');
 
-                            thumbnailsLoaded ++;
-                            $($this.progressBarId).find('.percent-ready').width(progressStep * thumbnailsLoaded + '%');
-                            if (isAllThumbnailsLoaded()) {
-                                $($this.progressBarId).hide();
-                                $this.render();
-                            }
-                        });
+                    thumbnailsLoaded ++;
+                    $($this.progressBarId).find('.percent-ready').width(progressStep * thumbnailsLoaded + '%');
+                    if (isAllThumbnailsLoaded()) {
+                        $($this.progressBarId).hide();
+                        $this.render();
+                    }
+                });
             });
         };
 
