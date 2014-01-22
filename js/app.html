@@ -14,6 +14,11 @@
             padding: 2px;
             font-size: 10px;
         }
+        .percent-ready {
+            width: 0;
+            height: 20px;
+            background-color: #78bb66;
+        }
         /*.clear { clear: both; }*/
     </style>
     <script src="jquery-2.0.3.min.js"></script>
@@ -31,6 +36,7 @@
             var flickrPhotosUrl = 'http://www.flickr.com/photos/';
             var photos;
             var containerId = '#gallery';
+            var progressBarId = '#progress-bar';
 
             var imagesPerRow = 10;
 
@@ -42,9 +48,10 @@
 
             function onPhotosLoaded() {
                 var thumbnailsLoaded = 0;
-                function isAllThumbnailsLoaded() {
+                var progressStep = 100 / photos.length;
+                var isAllThumbnailsLoaded = function () {
                     return photos.length == thumbnailsLoaded;
-                }
+                };
 
                 $.each(photos, function(key, photo) {
                     $.getJSON(apiUrl + '?' + $.param({method: apiMethod.photos.getSizes, format: apiResponseFormat, api_key: apiKey, photo_id: photo.id}) + '&jsoncallback=?')
@@ -56,7 +63,9 @@
                                 };
                                 photo.pageUrl = flickrPhotosUrl + photo.owner + '/' + photo.id;
                                 thumbnailsLoaded ++;
+                                $(progressBarId).find('.percent-ready').width(progressStep * thumbnailsLoaded + '%');
                                 if (isAllThumbnailsLoaded()) {
+                                    $(progressBarId).hide();
                                     onThumbnailsLoaded();
                                 }
                             });
@@ -92,6 +101,7 @@
     </script>
 </head>
 <body>
+    <div id="progress-bar"><div class="percent-ready"></div></div>
     <table id="gallery"></table>
 </body>
 </html>
