@@ -77,11 +77,11 @@
             this.photos = [];
             this.transport.getRecent().done(function(data) {
                 $this.photos = data.photos.photo;
-                $this.onPhotosLoaded();
+                $this.addSizesInfo();
             });
         }
 
-        Gallery.prototype.onPhotosLoaded = function() {
+        Gallery.prototype.addSizesInfo = function() {
             var $this = this;
             var thumbnailsLoaded = 0;
             var progressStep = 100 / this.photos.length;
@@ -110,13 +110,13 @@
                             $($this.progressBarId).find('.percent-ready').width(progressStep * thumbnailsLoaded + '%');
                             if (isAllThumbnailsLoaded()) {
                                 $($this.progressBarId).hide();
-                                $this.onThumbnailsLoaded();
+                                $this.render();
                             }
                         });
             });
         };
 
-        Gallery.prototype.onThumbnailsLoaded  = function() {
+        Gallery.prototype.render  = function() {
             var $this = this;
             var images = $();
             var rows = $();
