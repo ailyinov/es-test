@@ -42,7 +42,7 @@ class App
             foreach($rover->getExplorationErrors() as $explorationError) {
                 echo $explorationError->getMessage() . " comm. #{$explorationError->getCommandNum()}" . "\n";
             }
-            echo str_repeat('=', 20) . "\n";
+            echo str_repeat('-=-', 10) . "\n";
         }
 
     }
