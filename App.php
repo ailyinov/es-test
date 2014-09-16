@@ -26,7 +26,13 @@ class App
         $plateau = new Plateau($inputPlateau->getX(), $inputPlateau->getY());
         $marsCommandFactory = new MarsCommandFactory();
         foreach ($fileInput->getRovers() as $inputRover) {
-            $rover = new Rover($inputRover->getX(), $inputRover->getY(), $inputRover->getDirection(), $plateau, $marsCommandFactory);
+            $rover = new Rover(
+                $inputRover->getX(), 
+                $inputRover->getY(), 
+                $inputRover->getDirection(), 
+                $plateau, 
+                $marsCommandFactory
+            );
             $rover->setExplorationProgram($inputRover->getExplorationProgram());
             $rover->runExploration();
 
